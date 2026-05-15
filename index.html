@@ -179,18 +179,14 @@ select:focus,input:focus{border-color:#2d6a2d;box-shadow:0 0 0 3px rgba(45,106,4
         <div class="fg"><label>First Name</label><input type="text" id="firstName" oninput="updateAvatar()"></div>
         <div class="fg"><label>Surname</label><input type="text" id="surname" oninput="updateAvatar()"></div>
         <div class="fg"><label>Age</label><input type="number" id="age" min="1" max="120"></div>
-        <div class="fg"><label>Date of Birth</label><input type="date" id="dob"></div>
+        <div class="fg"><label>Date of Birth</label><input type="date" id="dob" onchange="calcAge()"></div>
         <div class="fg full"><label>Address</label><input type="text" id="address"></div>
         <div class="fg"><label>Area</label>
           <select id="area"></select>
         </div>
-        <div class="fg"><label>Commitment Level (auto-calculated)</label>
-          <select id="commitment">
-            <option value="1">Level 1 — Fairweather</option>
-            <option value="2">Level 2 — Situational</option>
-            <option value="3">Level 3 — Non-Situational</option>
-            <option value="4">Level 4 — Marital</option>
-          </select>
+        <div class="fg"><label>Commitment Level</label>
+          <div id="commitmentDisplay" style="padding:7px 10px;border:1px solid #c8ddc8;border-radius:7px;font-size:13px;background:#f0f7f0;color:#2d6a2d;font-weight:600;min-height:34px">—</div>
+          <input type="hidden" id="commitment" value="1">
         </div>
       </div>
     </div>
@@ -374,6 +370,7 @@ function loadMember(id){
   document.getElementById('address').value=m.address||'';
   document.getElementById('area').value=m.area||'Amsterdam Zuid';
   document.getElementById('commitment').value=m.commitment||'1';
+  updateCommitmentDisplay(m.commitment||'1');
   document.getElementById('memberNumDisplay').textContent='#'+m.num;
   updateAvatar(m.photo);
   loadReviewForm(id);
@@ -451,6 +448,13 @@ function loadReviewForm(memberId){
   calcScore();
 }
 
+function updateCommitmentDisplay(lvl){
+  const lv=LEVELS[lvl];
+  const el=document.getElementById('commitmentDisplay');
+  if(el) el.textContent='Level '+lvl+' — '+lv.label;
+  document.getElementById('commitment').value=String(lvl);
+}
+
 function calcScore(){
   let score=0;
   CHECKS.forEach(c=>{if(document.getElementById(c.id).checked)score+=c.pts;});
@@ -464,7 +468,7 @@ function calcScore(){
   document.getElementById('scoreBarInner').style.background=lv.color;
   if(currentId){
     const m=members.find(x=>x.id===currentId);
-    if(m){m.commitment=String(lvl);saveData();}
+    if(m){m.commitment=String(lvl);updateCommitmentDisplay(lvl);saveData();}
   }
 }
 
@@ -646,6 +650,17 @@ function removeArea(idx){
   renderAreaSelects();
   renderPipelineTabs();
   renderAreaList();
+}
+
+function calcAge(){
+  const dob = document.getElementById('dob').value;
+  if(!dob) return;
+  const today = new Date();
+  const birth = new Date(dob);
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if(m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+  document.getElementById('age').value = age;
 }
 
 function expandPhoto(){
