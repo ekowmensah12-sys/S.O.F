@@ -653,13 +653,13 @@ function removeArea(idx){
 }
 
 function calcAge(){
-  const dob = document.getElementById('dob').value;
-  if(!dob) return;
+  const dobVal = document.getElementById('dob').value;
+  if(!dobVal) return;
   const today = new Date();
-  const birth = new Date(dob);
+  const birth = new Date(dobVal);
   let age = today.getFullYear() - birth.getFullYear();
-  const m = today.getMonth() - birth.getMonth();
-  if(m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+  const monthDiff = today.getMonth() - birth.getMonth();
+  if(monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) age--;
   document.getElementById('age').value = age;
 }
 
