@@ -127,14 +127,7 @@ select:focus,input:focus{border-color:#2d6a2d;box-shadow:0 0 0 3px rgba(45,106,4
       <p>Member Database &amp; Pastoral Overview</p>
     </div>
   </div>
-  <div class="key-box">
-    <strong>Key</strong>
-    <span class="kpill kl1"><span class="dot d1"></span>L1 Fairweather (0–49)</span>
-    <span class="kpill kl2"><span class="dot d2"></span>L2 Situational (51–99)</span>
-    <span class="kpill kl3"><span class="dot d3"></span>L3 Non-Situational (100–174)</span>
-    <span class="kpill kl4"><span class="dot d4"></span>L4 Marital (175+)</span>
-  </div>
-</header>
+  </header>
 
 <div class="main">
 <div class="sidebar">
@@ -207,6 +200,7 @@ select:focus,input:focus{border-color:#2d6a2d;box-shadow:0 0 0 3px rgba(45,106,4
   <div id="tab-review" style="display:none">
     <div id="reviewNoMember" class="card" style="text-align:center;padding:30px;color:#7a9a7a">Select a member from the sidebar to begin their monthly review</div>
     <div id="reviewContent" style="display:none">
+      <div style="font-size:17px;font-weight:700;color:#1a2e1a;margin-bottom:10px" id="reviewMemberName">—</div>
       <div class="score-bar" id="scoreBar">
         <div>
           <div class="score-num" id="scoreNum">0</div>
@@ -444,7 +438,9 @@ function loadReviewForm(memberId){
   document.getElementById('reviewNoMember').style.display='none';
   document.getElementById('reviewContent').style.display='block';
   const m=members.find(x=>x.id===memberId);
-  document.getElementById('scoreName').textContent=(m.firstName||'')+' '+(m.surname||'');
+  const fullName=((m.firstName||'')+(m.surname?' '+m.surname:'')).trim()||'—';
+  document.getElementById('scoreName').textContent=fullName;
+  document.getElementById('reviewMemberName').textContent=fullName;
   const now=new Date();
   const monthKey=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
   document.getElementById('reviewMonth').value=monthKey;
